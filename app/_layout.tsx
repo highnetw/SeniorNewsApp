@@ -1,24 +1,58 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+// app/_layout.tsx
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Text } from 'react-native';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Tabs
+      screenOptions={{
+        tabBarStyle: {
+          height: 70,
+          paddingBottom: 10,
+        },
+        tabBarLabelStyle: {
+          fontSize: 14,
+          fontWeight: 'bold',
+        },
+        tabBarActiveTintColor: '#007AFF',
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: '날씨',
+          tabBarIcon: () => <Text style={{ fontSize: 28 }}>🌤️</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="politics"
+        options={{
+          title: '정치',
+          tabBarIcon: () => <Text style={{ fontSize: 28 }}>🏛️</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="tax"
+        options={{
+          title: '세금',
+          tabBarIcon: () => <Text style={{ fontSize: 28 }}>💰</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="investment"
+        options={{
+          title: '투자',
+          tabBarIcon: () => <Text style={{ fontSize: 28 }}>📈</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="health"
+        options={{
+          title: '건강',
+          tabBarIcon: () => <Text style={{ fontSize: 28 }}>🏥</Text>,
+        }}
+      />
+    </Tabs>
   );
 }
