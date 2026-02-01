@@ -73,6 +73,12 @@ export default function TabLayout() {
       options={{ href: null }} // 탭 바에서 숨김
       />
 
+      {/* 범인 검거: 뉴스 서비스 파일도 숨겨야 합니다! */}
+      <Tabs.Screen 
+        name="newsService" 
+        options={{ href: null }} 
+      />
+      
       {/* 혹시 +not-found.tsx 같은 파일이 있다면 그것도 숨겨주세요 */}
       <Tabs.Screen 
       name="+not-found" 
