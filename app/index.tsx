@@ -46,7 +46,7 @@ export default function WeatherScreen() {
           <View style={styles.weatherBox}>
             {/* 기상청 데이터는 weather.temp에 바로 담겨 있습니다! */}
             <Text style={styles.temp}>{weather?.temp ?? '--'}°</Text>
-            <Text style={styles.description}>현재 습도는 {weather?.humidity ?? '--'}% 입니다.</Text>
+            <Text style={styles.description}>습도 {weather?.humidity ?? '--'}% </Text>
             <Text style={styles.city}>서울 강남구 기준</Text>
           </View>
         ) : (
@@ -101,13 +101,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   description: {
-    fontSize: 20,
+    fontSize: 30,
     color: '#555',
     fontWeight: '500',
+    textAlign: 'center',
   },
   city: {
-    fontSize: 16,
+    fontSize: 18,
     marginTop: 20,
-    color: '#aaa',
+    color: '#333',
+    textAlign: 'center',
   },
 });
