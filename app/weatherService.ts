@@ -24,8 +24,8 @@ export const fetchCurrentWeather = async () => {
 
     const baseTime = `${hours.toString().padStart(2, '0')}00`;
 
-    // 3. API URL 조립
-    const url = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${WEATHER_API_KEY}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=60&ny=127`;
+    // 3. API URL 조립: apk를 만들 때에는 https로 써야할 지도 모른다 
+    const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${WEATHER_API_KEY}&pageNo=1&numOfRows=10&dataType=JSON&base_date=${baseDate}&base_time=${baseTime}&nx=60&ny=127`;
 
     console.log(`[한국 시간 요청] 날짜: ${baseDate}, 시간: ${baseTime}`);
 
