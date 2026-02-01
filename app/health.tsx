@@ -1,52 +1,22 @@
 // app/health.tsx
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl,
-  ActivityIndicator,
-  Linking,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// 1. 우리가 만든 중앙 공급소에서 도구와 키워드 가져오기
+import { fetchNaverNews, NEWS_KEYWORDS } from './newsService';
 
 export default function HealthScreen() {
-  const [news, setNews] = useState<any[]>([]);
+  const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const loadNews = async () => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const dummyNews = Array.from({ length: 8 }, (_, i) => ({
-        id: `health-${i}`,
-        title: `건강 관련 중요 뉴스 ${i + 1}`,
-        summary: '75세 이상 어르신들에게 중요한 건강, 의료 정보를 담고 있습니다. 질병 예방, 건강검진, 요양 등과 관련된 유익한 내용입니다.',
-        source: '연합뉴스',
-        date: `${i + 1}시간 전`,
-        url: 'https://www.naver.com',
-      }));
-      
-      setNews(dummyNews);
-      setLoading(false);
-    } catch (error) {
-      console.error('뉴스 로딩 실패:', error);
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    loadNews();
+    // 2. 'TAX' 키워드를 사용해서 뉴스 데이터 요청
+    fetchNaverNews(NEWS_KEYWORDS.HEALTH).then((data) => {
+      setNews(data);
+      setLoading(false);
+    });
   }, []);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadNews();
-    setRefreshing(false);
-  };
-
+  // 뉴스를 눌렀을 때 해당 사이트로 이동하는 함수
   const openNews = (url: string) => {
     Linking.openURL(url);
   };
@@ -54,147 +24,54 @@ export default function HealthScreen() {
   const renderNewsItem = ({ item }: any) => (
     <TouchableOpacity
       style={styles.newsCard}
-      onPress={() => openNews(item.url)}
+      onPress={() => openNews(item.link)} // 1. url 대신 link!
       activeOpacity={0.7}
     >
       <Text style={styles.newsTitle} numberOfLines={2}>
-        {item.title}
+        {/* 2. 네이버 API는 title이라는 이름으로 제목을 줍니다. */}
+        {item.title.replace(/<[^>]*>?/gm, '')} 
       </Text>
       <Text style={styles.newsSummary} numberOfLines={3}>
-        {item.summary}
+        {/* 3. summary 대신 description이라는 이름으로 요약을 줍니다. */}
+        {item.description ? item.description.replace(/<[^>]*>?/gm, '') : '내용 없음'}
       </Text>
       <View style={styles.newsFooter}>
-        <Text style={styles.newsSource}>{item.source}</Text>
-        <Text style={styles.newsDate}>{item.date}</Text>
+        <Text style={styles.newsSource}>네이버 뉴스</Text>
+        <Text style={styles.newsDate}>
+          {new Date(item.pubDate).toLocaleDateString()}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>뉴스를 불러오는 중...</Text>
-      </View>
+      <View style={styles.center}><ActivityIndicator size="large" color="#007AFF" /></View>
     );
   }
 
+  // ... (중략: return 문 안의 FlatList 부분부터)
   return (
     <View style={styles.container}>
       <FlatList
         data={news}
-        renderItem={renderNewsItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        keyExtractor={(item, index) => item.link || index.toString()}
+        renderItem={renderNewsItem} // 이름 맞춤!
+        ListHeaderComponent={<Text style={styles.header}>🏥 시니어 건강 뉴스</Text>}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
-  },
-  listContent: {
-    padding: 15,
-  },
-  newsCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  newsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 12,
-    lineHeight: 28,
-  },
-  newsSummary: {
-    fontSize: 16,
-    color: '#666',
-    lineHeight: 24,
-    marginBottom: 12,
-  },
-  newsFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#EEE',
-    paddingTop: 12,
-  },
-  newsSource: {
-    fontSize: 14,
-    color: '#007AFF',
-    fontWeight: '600',
-  },
-  newsDate: {
-    fontSize: 14,
-    color: '#999',
-  },
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header: { fontSize: 24, fontWeight: 'bold', margin: 20, color: '#333' },
+  // renderNewsItem에서 사용하는 이름들로 통일했습니다!
+  newsCard: { backgroundColor: '#fff', padding: 20, borderRadius: 12, marginHorizontal: 15, marginBottom: 15, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+  newsTitle: { fontSize: 20, fontWeight: 'bold', color: '#007AFF', marginBottom: 10, lineHeight: 28 },
+  newsSummary: { fontSize: 16, color: '#444', lineHeight: 24, marginBottom: 12 },
+  newsFooter: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 10 },
+  newsSource: { fontSize: 14, color: '#666', fontWeight: 'bold' },
+  newsDate: { fontSize: 14, color: '#999' }
 });
-```
-
----
-
-## 📱 최종 확인 체크리스트
-
-파일을 모두 저장하고 폰에서 확인하세요!
-
-### ✅ 확인사항:
-
-**하단 탭바:**
-- 🌤️ 날씨
-- 🏛️ 정치
-- 💰 세금
-- 📈 투자
-- 🏥 건강
-
-**각 화면:**
-- ✅ 날씨: 18°C, 맑음, 건강 조언
-- ✅ 정치: "정치 관련 중요 뉴스 1~8"
-- ✅ 세금: "세금 관련 중요 뉴스 1~8"
-- ✅ 투자: "투자 관련 중요 뉴스 1~8"
-- ✅ 건강: "건강 관련 중요 뉴스 1~8"
-
-**기능:**
-- ✅ 당겨서 새로고침
-- ✅ 뉴스 카드 클릭하면 브라우저 열림
-
----
-
-## 🎉 축하합니다!
-
-**2단계 완료!** 기본 UI가 완성되었습니다!
-
----
-
-## 📊 진행 상황
-```
-✅ 1단계: 프로젝트 세팅
-✅ 2단계: 기본 UI 구조
-⬜ 3단계: Firebase 연동
-⬜ 4단계: API 연동 (날씨, 뉴스)
-⬜ 5단계: Firebase Functions (자동 업데이트)
