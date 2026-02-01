@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { fetchCurrentWeather } from './weatherService';
+import { fetchCurrentWeather } from './_weatherService';
 
 export default function WeatherScreen() {
   const [weather, setWeather] = useState<any>(null);
@@ -60,7 +60,7 @@ export default function WeatherScreen() {
     );
   }
 
-  return (
+ return (
     <ScrollView
       style={styles.container}
       refreshControl={
@@ -68,37 +68,43 @@ export default function WeatherScreen() {
       }
     >
       <View style={styles.mainWeather}>
-        <Text style={styles.temperature}>{weather.temperature}°C</Text>
-        <Text style={styles.description}>{weather.description}</Text>
+        {/* 물음표(?.)를 붙여서 안전하게 접근하세요 */}
+        <Text style={styles.temperature}>{weather?.temperature ?? '--'}°C</Text>
+        <Text style={styles.description}>{weather?.description ?? '정보 없음'}</Text>
       </View>
 
       <View style={styles.detailsContainer}>
         <View style={styles.detailCard}>
           <Text style={styles.detailIcon}>💧</Text>
           <Text style={styles.detailLabel}>습도</Text>
-          <Text style={styles.detailValue}>{weather.humidity}%</Text>
+          <Text style={styles.detailValue}>{weather?.humidity ?? '0'}%</Text>
         </View>
 
         <View style={styles.detailCard}>
           <Text style={styles.detailIcon}>🌬️</Text>
           <Text style={styles.detailLabel}>바람</Text>
-          <Text style={styles.detailValue}>{weather.wind}</Text>
+          <Text style={styles.detailValue}>{weather?.wind ?? '확인중'}</Text>
         </View>
 
         <View style={styles.detailCard}>
           <Text style={styles.detailIcon}>☔</Text>
           <Text style={styles.detailLabel}>강수확률</Text>
-          <Text style={styles.detailValue}>{weather.rainProbability}%</Text>
+          <Text style={styles.detailValue}>{weather?.rainProbability ?? '0'}%</Text>
         </View>
       </View>
 
       <View style={styles.adviceContainer}>
         <Text style={styles.adviceTitle}>🏥 오늘의 건강 조언</Text>
-        {weather.advice.map((item: string, index: number) => (
-          <Text key={index} style={styles.adviceText}>
-            • {item}
-          </Text>
-        ))}
+        {/* advice가 있을 때만 맵을 돌리도록 보호 */}
+        {weather?.advice ? (
+          weather.advice.map((item: string, index: number) => (
+            <Text key={index} style={styles.adviceText}>
+              • {item}
+            </Text>
+          ))
+        ) : (
+          <Text style={styles.adviceText}>날씨 데이터를 불러오고 있습니다.</Text>
+        )}
       </View>
     </ScrollView>
   );
