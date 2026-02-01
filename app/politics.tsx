@@ -57,7 +57,7 @@ export default function PoliticsScreen() {
         data={news}
         keyExtractor={(item, index) => item.link || index.toString()}
         renderItem={renderNewsItem} // 이름 맞춤!
-        ListHeaderComponent={<Text style={styles.header}>🏥 시니어 정치 뉴스</Text>}
+        ListHeaderComponent={<Text style={styles.header}>⚖️ 시니어 정치 뉴스</Text>}
       />
     </View>
   );

@@ -1,6 +1,6 @@
 // app/health.tsx
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // 1. 우리가 만든 중앙 공급소에서 도구와 키워드 가져오기
 import { fetchNaverNews, NEWS_KEYWORDS } from './newsService';
 

@@ -1,11 +1,11 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, Text } from 'react-native';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         tabBarActiveTintColor: '#4A90E2', // 활성화된 메뉴는 파란색
         tabBarStyle: {
           // 안드로이드 하단 버튼과 겹치지 않게 높이를 조절합니다
@@ -24,43 +24,43 @@ export default function TabLayout() {
         name="index"
         options={{
           title: '날씨',
-          tabBarIcon: () => <text style={{fontSize: 20}}>☀️</text>,
+          tabBarIcon: () => <Text style={{fontSize: 20}}>☀️</Text>,
         }}
       />
 
       {/* 2. 정치 */}
       <Tabs.Screen
-        name="정치"
+        name="politics"
         options={{
           title: '정치',
-          tabBarIcon: () => <text style={{fontSize: 20}}>⚖️</text>,
+          tabBarIcon: () => <Text style={{fontSize: 20}}>⚖️</Text>,
         }}
       />
 
       {/* 3. 세금 */}
       <Tabs.Screen
-        name="세금"
+        name="tax"
         options={{
           title: '세금',
-          tabBarIcon: () => <text style={{fontSize: 20}}>💸</text>,
+          tabBarIcon: () => <Text style={{fontSize: 20}}>💸</Text>,
         }}
       />
 
       {/* 4. 투자 */}
       <Tabs.Screen
-        name="투자"
+        name="investment"
         options={{
           title: '투자',
-          tabBarIcon: () => <text style={{fontSize: 22}}>📈</text>,
+          tabBarIcon: () => <Text style={{fontSize: 22}}>📈</Text>,
         }}
       />
 
       {/* 5. 건강 */}
       <Tabs.Screen
-        name="건강"
+        name="health"
         options={{
           title: '건강',
-          tabBarIcon: () => <text style={{fontSize: 22}}>🏥</text>,
+          tabBarIcon: () => <Text style={{fontSize: 22}}>🏥</Text>,
         }}
       />
     </Tabs>

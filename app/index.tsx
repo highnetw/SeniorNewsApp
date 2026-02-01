@@ -1,198 +1,113 @@
-// app/index.tsx
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  RefreshControl,
-  ScrollView,
+  Platform,
+  SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
-import { fetchCurrentWeather } from './_weatherService';
+import { fetchCurrentWeather } from './weatherService'; // 언더바 지운 이름 확인!
 
 export default function WeatherScreen() {
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const loadWeather = async () => {
-  try {
-    // 이제 가짜 데이터 대신 진짜 기상청 데이터를 가져옵니다!
-    const realData = await fetchCurrentWeather();
-    
-    if (realData) {
-      setWeather({
-        temperature: realData.temp,      // 실제 기온
-        description: '실시간 날씨',       // 기상청 데이터에 따라 바꿀 수 있어요
-        humidity: realData.humidity,    // 실제 습도
-        wind: '정보 확인 중',             // 필요시 추가 가능
-        rainProbability: 0,             // 필요시 추가 가능
-        advice: [
-          realData.temp < 10 ? '날씨가 쌀쌀합니다. 따뜻하게 입으세요.' : '활동하기 좋은 날씨입니다.',
-          '미세먼지 정보를 확인하고 외출하세요.',
-          '오늘도 건강한 하루 되세요, 닉네임님!'
-        ],
-      });
-    }
-    setLoading(false);
-  } catch (error) {
-    console.error('날씨 로딩 실패:', error);
-    setLoading(false);
-  }
-};
- 
   useEffect(() => {
+    async function loadWeather() {
+      try {
+        const data = await fetchCurrentWeather();
+        setWeather(data);
+      } catch (error) {
+        console.error("날씨 로딩 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
     loadWeather();
   }, []);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadWeather();
-    setRefreshing(false);
-  };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>날씨 정보를 불러오는 중...</Text>
+        <ActivityIndicator size="large" color="#4A90E2" />
+        <Text style={{ marginTop: 10 }}>기상청 정보를 연결 중입니다...</Text>
       </View>
     );
   }
 
- return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <View style={styles.mainWeather}>
-        {/* 물음표(?.)를 붙여서 안전하게 접근하세요 */}
-        <Text style={styles.temperature}>{weather?.temperature ?? '--'}°C</Text>
-        <Text style={styles.description}>{weather?.description ?? '정보 없음'}</Text>
-      </View>
-
-      <View style={styles.detailsContainer}>
-        <View style={styles.detailCard}>
-          <Text style={styles.detailIcon}>💧</Text>
-          <Text style={styles.detailLabel}>습도</Text>
-          <Text style={styles.detailValue}>{weather?.humidity ?? '0'}%</Text>
-        </View>
-
-        <View style={styles.detailCard}>
-          <Text style={styles.detailIcon}>🌬️</Text>
-          <Text style={styles.detailLabel}>바람</Text>
-          <Text style={styles.detailValue}>{weather?.wind ?? '확인중'}</Text>
-        </View>
-
-        <View style={styles.detailCard}>
-          <Text style={styles.detailIcon}>☔</Text>
-          <Text style={styles.detailLabel}>강수확률</Text>
-          <Text style={styles.detailValue}>{weather?.rainProbability ?? '0'}%</Text>
-        </View>
-      </View>
-
-      <View style={styles.adviceContainer}>
-        <Text style={styles.adviceTitle}>🏥 오늘의 건강 조언</Text>
-        {/* advice가 있을 때만 맵을 돌리도록 보호 */}
-        {weather?.advice ? (
-          weather.advice.map((item: string, index: number) => (
-            <Text key={index} style={styles.adviceText}>
-              • {item}
-            </Text>
-          ))
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>오늘의 날씨</Text>
+        
+        {weather ? (
+          <View style={styles.weatherBox}>
+            {/* 기상청 데이터는 weather.temp에 바로 담겨 있습니다! */}
+            <Text style={styles.temp}>{weather?.temp ?? '--'}°</Text>
+            <Text style={styles.description}>현재 습도는 {weather?.humidity ?? '--'}% 입니다.</Text>
+            <Text style={styles.city}>서울 강남구 기준</Text>
+          </View>
         ) : (
-          <Text style={styles.adviceText}>날씨 데이터를 불러오고 있습니다.</Text>
+          <View style={styles.weatherBox}>
+            <Text>날씨 정보를 가져올 수 없습니다.</Text>
+            <Text style={{ fontSize: 12, marginTop: 10, color: '#999' }}>기상청 점검 중이거나 자정 업데이트 중일 수 있습니다.</Text>
+          </View>
         )}
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F0F8FF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    paddingTop: 80,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
-  },
-  mainWeather: {
-    backgroundColor: '#4A90E2',
-    padding: 40,
-    alignItems: 'center',
-  },
-  temperature: {
-    fontSize: 72,
+  title: {
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#333',
+    marginBottom: 30,
+  },
+  weatherBox: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    width: '85%',
+    padding: 40,
+    borderRadius: 30,
+    // 그림자 효과
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 10 },
+      android: { elevation: 8 },
+    }),
+  },
+  temp: {
+    fontSize: 90,
+    fontWeight: 'bold',
+    color: '#4A90E2',
+    marginBottom: 10,
   },
   description: {
-    fontSize: 28,
-    color: '#FFF',
-    marginTop: 10,
-  },
-  detailsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 20,
-  },
-  detailCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 15,
-    padding: 20,
-    alignItems: 'center',
-    width: '28%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  detailIcon: {
-    fontSize: 32,
-    marginBottom: 10,
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
-  },
-  detailValue: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    color: '#555',
+    fontWeight: '500',
   },
-  adviceContainer: {
-    backgroundColor: '#FFF',
-    margin: 20,
-    padding: 20,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  adviceTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-  },
-  adviceText: {
+  city: {
     fontSize: 16,
-    color: '#666',
-    lineHeight: 28,
-    marginBottom: 10,
+    marginTop: 20,
+    color: '#aaa',
   },
 });

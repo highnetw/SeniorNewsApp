@@ -57,7 +57,7 @@ export default function TaxScreen() {
         data={news}
         keyExtractor={(item, index) => item.link || index.toString()}
         renderItem={renderNewsItem} // 이름 맞춤!
-        ListHeaderComponent={<Text style={styles.header}>🏥 시니어 세금 뉴스</Text>}
+        ListHeaderComponent={<Text style={styles.header}>💸 시니어 세금 뉴스</Text>}
       />
     </View>
   );
