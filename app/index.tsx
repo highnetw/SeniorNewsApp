@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { fetchCurrentWeather } from './weatherService';
 
 export default function WeatherScreen() {
   const [weather, setWeather] = useState<any>(null);
@@ -15,29 +16,31 @@ export default function WeatherScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const loadWeather = async () => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+  try {
+    // 이제 가짜 데이터 대신 진짜 기상청 데이터를 가져옵니다!
+    const realData = await fetchCurrentWeather();
+    
+    if (realData) {
       setWeather({
-        temperature: 18,
-        description: '맑음',
-        humidity: 60,
-        wind: '약함',
-        rainProbability: 10,
+        temperature: realData.temp,      // 실제 기온
+        description: '실시간 날씨',       // 기상청 데이터에 따라 바꿀 수 있어요
+        humidity: realData.humidity,    // 실제 습도
+        wind: '정보 확인 중',             // 필요시 추가 가능
+        rainProbability: 0,             // 필요시 추가 가능
         advice: [
-          '아침 저녁으로 일교차가 큽니다. 겉옷을 준비하세요.',
-          '미세먼지가 좋아 산책하기 좋은 날입니다.',
-          '자외선이 강하니 외출 시 모자를 착용하세요.',
+          realData.temp < 10 ? '날씨가 쌀쌀합니다. 따뜻하게 입으세요.' : '활동하기 좋은 날씨입니다.',
+          '미세먼지 정보를 확인하고 외출하세요.',
+          '오늘도 건강한 하루 되세요, 닉네임님!'
         ],
       });
-      
-      setLoading(false);
-    } catch (error) {
-      console.error('날씨 로딩 실패:', error);
-      setLoading(false);
     }
-  };
-
+    setLoading(false);
+  } catch (error) {
+    console.error('날씨 로딩 실패:', error);
+    setLoading(false);
+  }
+};
+ 
   useEffect(() => {
     loadWeather();
   }, []);
