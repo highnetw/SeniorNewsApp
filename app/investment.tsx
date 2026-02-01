@@ -38,7 +38,7 @@ export default function InvestmentScreen() {
       <View style={styles.newsFooter}>
         <Text style={styles.newsSource}>네이버 뉴스</Text>
         <Text style={styles.newsDate}>
-          {new Date(item.pubDate).toLocaleDateString()}
+          {(item.pubDate)}
         </Text>
       </View>
     </TouchableOpacity>

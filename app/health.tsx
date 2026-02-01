@@ -38,7 +38,7 @@ export default function HealthScreen() {
       <View style={styles.newsFooter}>
         <Text style={styles.newsSource}>네이버 뉴스</Text>
         <Text style={styles.newsDate}>
-          {new Date(item.pubDate).toLocaleDateString()}
+          {(item.pubDate)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -73,5 +73,5 @@ const styles = StyleSheet.create({
   newsSummary: { fontSize: 16, color: '#444', lineHeight: 24, marginBottom: 12 },
   newsFooter: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 10 },
   newsSource: { fontSize: 14, color: '#666', fontWeight: 'bold' },
-  newsDate: { fontSize: 14, color: '#999' }
+  newsDate: { fontSize: 14, color: '#333' }
 });
