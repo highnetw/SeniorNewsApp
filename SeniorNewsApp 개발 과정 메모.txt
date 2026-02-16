@@ -1,0 +1,48 @@
+
+
+///
+좋은 키워드 
+// 1. 키워드 목록 추가 (investment.tsx에서 이걸 찾고 있었습니다!)
+export const NEWS_KEYWORDS = {
+  POLITICS: "시니어 복지 정책",
+  TAX: "연금 절세",
+  INVESTMENT: "고령자 자산관리",
+  HEALTH: "어르신 건강 관리 비결"
+};
+
+////
+깃 푸시 20260216 18:50
+projectId": "c175b888-ddbd-427f-921a-ada5712c0bf7"
+
+////
+
+apk를 최신으로 바꾸려다 보니까, eas 한도를 잡아먹기 때문에 eas/smartstorm으로 변경해서 한도를 15개로 살리고 진행했다.^^^^
+
+
+////
+seniornewsapp 
+배포는 vercel
+vercel은 깃 아이디로 로그인
+
+////
+
+배포 전, 로컬 환경에서 웹 버전이 잘 돌아가는지 확인합니다.
+
+Bash
+npx expo start --web
+
+
+////
+20260214 토
+
+아이폰을 위해서  안드로이드용 라이트 네이티브로 만든 앱들을  베르셀 사이트에서  빌드 환경 변수를 몇 가지 조절해 주고  개발 투어를  엑스포로  세팅을 해 주면  그 자체가  웹 방식으로 배포가 돼서  그 웹 주소만 클릭하면  아이폰에도  사용할 수 있고 아이폰에서 해당 앱 주소를 홈페이지에  붙여 넣게 하면 마치  앱을 설치한 것처럼  사용할 수 있다 
+
+vercel
+Build Comman: npx expo export --platform web
+Output Directory: dist
+
+Build Environment
+Name: EXPO_PUBLIC_GEMINI_API_KEY
+Value: API 키값
+
+====
