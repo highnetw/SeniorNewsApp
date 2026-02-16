@@ -5,10 +5,10 @@ const CLIENT_SECRET = 'uSFdxeWEPB';
 
 // 1. 키워드 목록 추가 (investment.tsx에서 이걸 찾고 있었습니다!)
 export const NEWS_KEYWORDS = {
-  POLITICS: "2026 시니어 정치 복지",
-  TAX: "비과세 증여세 상속세 2026",
-  INVESTMENT: "2026 투자",
-  HEALTH: "어르신 건강 음식 운동 2026"
+  POLITICS: "노인 복지 정책",
+  TAX: "연금 절세",
+  INVESTMENT: "고령자 자산관리",
+  HEALTH: "어르신 건강 관리 비결"
 };
 
 // 2. 함수 이름을 fetchNaverNews로 변경 (investment.tsx와 이름 맞춤)
