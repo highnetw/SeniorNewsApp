@@ -2,7 +2,7 @@
   "expo": {
     "name": "시니어 뉴스",
     "slug": "SeniorNewsApp",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "icon": "./assets/images/icon.png",
     "scheme": "senior-news", 
     "web": {
