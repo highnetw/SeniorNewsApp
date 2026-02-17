@@ -4,6 +4,11 @@
     "slug": "SeniorNewsApp",
     "version": "1.0.0",
     "icon": "./assets/images/icon.png",
+    "scheme": "senior-news", 
+    "web": {
+      "favicon": "./assets/images/icon.png",
+      "bundler": "metro"
+    },
     "android": {
       "package": "com.bokinwoo.SeniorNewsApp",
       "adaptiveIcon": {
