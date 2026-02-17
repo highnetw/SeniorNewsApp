@@ -6,7 +6,6 @@
     "icon": "./assets/images/icon.png",
     "android": {
       "package": "com.bokinwoo.SeniorNewsApp",
-      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
