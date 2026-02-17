@@ -1,11 +1,13 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+// 1. ScrollView를 추가했습니다.
+import { ActivityIndicator, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchWeatherByCoords } from '../services/weatherService';
 
 export default function WeatherScreen() {
-  const [localWeather, setLocalWeather] = useState<any>(null); // 내 위치
-  const [vancouverWeather, setVancouverWeather] = useState<any>(null); // 밴쿠버
+  const [localWeather, setLocalWeather] = useState<any>(null);
+  const [vancouverWeather, setVancouverWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   const VANCOUVER_COORDS = { lat: 49.2827, lon: -123.1207 };
@@ -13,7 +15,6 @@ export default function WeatherScreen() {
   useEffect(() => {
     async function loadAllWeather() {
       try {
-        // 1. 위치 권한 요청 및 현재 위치 가져오기
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           console.error("위치 권한 거부됨");
@@ -21,7 +22,6 @@ export default function WeatherScreen() {
 
         let location = await Location.getCurrentPositionAsync({});
         
-        // 2. 데이터 가져오기 (내 위치 & 밴쿠버)
         const localData = await fetchWeatherByCoords(location.coords.latitude, location.coords.longitude);
         const vancouverData = await fetchWeatherByCoords(VANCOUVER_COORDS.lat, VANCOUVER_COORDS.lon);
 
@@ -46,35 +46,43 @@ export default function WeatherScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.title}>실시간 날씨</Text>
-        
-        {/* 상단: 내 현재 위치 날씨 */}
-        <View style={styles.weatherBox}>
-          <Text style={styles.locationTag}>📍 내 현재 위치 ({localWeather?.city})</Text>
-          <Text style={styles.temp}>{localWeather?.temp ?? '--'}°</Text>
-          <Text style={styles.description}>{localWeather?.description}</Text>
-          <Text style={styles.humidity}>습도 {localWeather?.humidity}%</Text>
-        </View>
+    // 2. edges 설정을 통해 하단 탭 영역까지 안전하게 보호합니다.
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      {/* 3. ScrollView로 감싸서 내용이 길어져도 위아래로 밀 수 있게 합니다. */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <Text style={styles.title}>실시간 날씨</Text>
+          
+          {/* 상단: 내 현재 위치 날씨 */}
+          <View style={styles.weatherBox}>
+            <Text style={styles.locationTag}>📍 내 현재 위치 ({localWeather?.city})</Text>
+            <Text style={styles.temp}>{localWeather?.temp ?? '--'}°</Text>
+            <Text style={styles.description}>{localWeather?.description}</Text>
+            <Text style={styles.humidity}>습도 {localWeather?.humidity}%</Text>
+          </View>
 
-        {/* 하단: 밴쿠버 날씨 (손주들 동네) */}
-        <View style={[styles.weatherBox, styles.vancouverBox]}>
-          <Text style={styles.locationTag}>🇨🇦 밴쿠버</Text>
-        {/*  <View style={styles.vancouverRow}> */}
+          {/* 하단: 밴쿠버 날씨 (손주들 동네) */}
+          <View style={[styles.weatherBox, styles.vancouverBox]}>
+            <Text style={styles.locationTag}>🇨🇦 밴쿠버</Text>
             <Text style={styles.vancouverTemp}>{vancouverWeather?.temp ?? '--'}°</Text> 
             <Text style={styles.vancouverDesc}>{vancouverWeather?.description}</Text> 
-          <Text style={styles.vancouverHumi}>습도 {vancouverWeather?.humidity}%</Text>
-          {/*</View>*/}
+            <Text style={styles.vancouverHumi}>습도 {vancouverWeather?.humidity}%</Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#F0F8FF', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
-  container: { flex: 1, alignItems: 'center', paddingTop: 50 },
+  safeArea: { flex: 1, backgroundColor: '#F0F8FF' },
+  // 4. 스크롤 내부 여백 설정 (하단 탭에 가려지지 않게 넉넉히 줍니다)
+  scrollContent: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingBottom: 60, 
+  },
+  container: { width: '100%', alignItems: 'center', paddingTop: 30 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 28, fontWeight: 'bold', color: '#333', marginBottom: 20 },
   weatherBox: {
@@ -87,7 +95,7 @@ const styles = StyleSheet.create({
   humidity: { fontSize: 18, color: '#756f6f', marginTop: 5 },
   vancouverBox: { marginTop: 20, backgroundColor: '#E3F2FD', padding: 20 },
   vancouverRow: { flexDirection: 'row', alignItems: 'center', marginTop: 5 },
-  vancouverTemp: { fontSize: 45, fontWeight: 'bold', color: '#1976D2', textAlign: 'center', marginRight: 0 },
-  vancouverDesc: { fontSize: 20, color: '#555' },
+  vancouverTemp: { fontSize: 45, fontWeight: 'bold', color: '#1976D2', textAlign: 'center' },
+  vancouverDesc: { fontSize: 20, color: '#555', textAlign: 'center' },
   vancouverHumi: { fontSize: 18, color: '#756f6f', textAlign: 'center', marginTop: 5 },
 });
