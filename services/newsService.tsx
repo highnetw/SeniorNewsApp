@@ -12,31 +12,41 @@ export const NEWS_KEYWORDS = {
 };
 
 // 2. 함수 이름을 fetchNaverNews로 변경 (investment.tsx와 이름 맞춤)
+// 2. 함수 이름을 fetchNaverNews로 유지하며, 중계 서버 로직을 추가합니다.
 export const fetchNaverNews = async (query: string) => {
   try {
-    const response = await fetch(
-      `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(query)}&display=20&sort=date`,
-      {
-        headers: {
-          'X-Naver-Client-Id': CLIENT_ID,
-          'X-Naver-Client-Secret': CLIENT_SECRET,
-        },
-      }
-    );
+    const isWeb = typeof window !== 'undefined';
+    
+    // [변경점 1] 웹이면 Vercel 대리인 주소로, 앱이면 네이버 직접 주소로 결정
+    const url = isWeb
+      ? `/api/news?query=${encodeURIComponent(query)}`
+      : `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(query)}&display=20&sort=date`;
 
+    const options: RequestInit = { method: 'GET' };
+
+    // [변경점 2] 앱(APK)일 때만 헤더에 신분증(ID/Secret)을 넣습니다.
+    if (!isWeb) {
+      options.headers = {
+        'X-Naver-Client-Id': CLIENT_ID,
+        'X-Naver-Client-Secret': CLIENT_SECRET,
+      };
+    }
+
+    const response = await fetch(url, options);
     const data = await response.json();
 
     if (data.items) {
+      // 맛대장님의 기존 '데이터 가공' 로직을 그대로 유지합니다!
       return data.items.map((item: any) => {
-        const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+        const cleanTitle = item.title.replace(/<[^>]*>?/gm, ''); // HTML 태그 제거
         const isNaverNews = item.link.includes("news.naver.com");
 
         return {
           title: cleanTitle,
           link: item.link,
-          pubDate: formatDate(item.pubDate),
+          pubDate: formatDate(item.pubDate), // 맛대장님의 날짜 변환 함수 사용
           publisher: isNaverNews ? "네이버뉴스" : "언론사 직접제공",
-          description: item.description.replace(/<[^>]*>?/gm, ''),
+          description: item.description.replace(/<[^>]*>?/gm, ''), // 설명 태그 제거
         };
       });
     }
