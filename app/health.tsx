@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // 1. 우리가 만든 중앙 공급소에서 도구와 키워드 가져오기
-import { fetchNaverNews, NEWS_KEYWORDS } from './newsService';
+import { fetchNaverNews, NEWS_KEYWORDS } from '../services/newsService';
 
 export default function HealthScreen() {
   const [news, setNews] = useState([]);
