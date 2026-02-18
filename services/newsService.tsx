@@ -14,8 +14,8 @@ export const NEWS_KEYWORDS = {
 export const fetchNaverNews = async (query: string) => {
   try {
     // 1. 확실하게 'web'일 때만 true가 되도록 판별
-    const isWeb = Platform.OS === 'web'; 
-    
+    const isWeb = Platform.OS === 'web';
+
     // 2. 환경에 따른 주소 결정 (프록시 vs 네이버 직접)
     const url = isWeb
       ? `/api/news?query=${encodeURIComponent(query)}`
@@ -41,20 +41,31 @@ export const fetchNaverNews = async (query: string) => {
     const data = await response.json();
 
     if (data.items) {
-      return data.items.map((item: any) => {
-        const cleanTitle = item.title.replace(/<[^>]*>?/gm, ''); 
+      // 1. 먼저 데이터를 기존 방식대로 예쁘게 정리합니다.
+      const newsList = data.items.map((item: any) => {
+        const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
         const isNaverNews = item.link.includes("news.naver.com");
 
         return {
           title: cleanTitle,
           link: item.link,
-          pubDate: formatDate(item.pubDate), 
+          pubDate: formatDate(item.pubDate),
           publisher: isNaverNews ? "네이버뉴스" : "언론사 직접제공",
-          description: item.description.replace(/<[^>]*>?/gm, ''), 
+          description: item.description.replace(/<[^>]*>?/gm, ''),
         };
       });
+
+      // ⭐ 2. 중복 제거 필터 (제목이 같은 뉴스는 처음 하나만 남깁니다)
+      const uniqueNews = newsList.filter((news: any, index: number, self: any[]) =>
+        index === self.findIndex((t) => t.title === news.title)
+      );
+
+      // 3. 중복이 사라진 깨끗한 리스트를 리턴!
+      return uniqueNews;
     }
+
     return [];
+    // ... 뒷부분 생략 (catch 블록 등)
   } catch (error) {
     console.error("뉴스 로딩 실패:", error);
     return [];
@@ -64,21 +75,21 @@ export const fetchNaverNews = async (query: string) => {
 const formatDate = (dateStr: string) => {
   try {
     const date = new Date(dateStr);
-    
+
     if (isNaN(date.getTime())) {
       const parts = dateStr.split(' ');
       if (parts.length >= 4) {
         const day = parts[1];
         const monthName = parts[2];
         const year = parts[3];
-        const time = parts[4].substring(0, 5); 
-        
-        const months: any = { Jan:'01', Feb:'02', Mar:'03', Apr:'04', May:'05', Jun:'06', Jul:'07', Aug:'08', Sep:'09', Oct:'10', Nov:'11', Dec:'12' };
+        const time = parts[4].substring(0, 5);
+
+        const months: any = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12' };
         const month = months[monthName] || '01';
-        
+
         return `${year}.${month}.${day} ${time}`;
       }
-      return "최근 소식"; 
+      return "최근 소식";
     }
 
     const year = date.getFullYear();

@@ -6,17 +6,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchWeatherByCoords } from '../services/weatherService';
 
 const FAVORITE_CITIES = [
-  { label: '🇨🇦 밴쿠버', name: 'Vancouver', lat: 49.2827, lon: -123.1207 },
-  { label: '🇨🇦 토론토', name: 'Toronto', lat: 43.6532, lon: -79.3832 },
   { label: '🇺🇸 뉴욕', name: 'New York', lat: 40.7128, lon: -74.0060 },
+  { label: '🇨🇦 토론토', name: 'Toronto', lat: 43.6532, lon: -79.3832 },
+  { label: '🇨🇦 밴쿠버', name: 'Vancouver', lat: 49.2827, lon: -123.1207 },
   { label: '🇺🇸 LA', name: 'Los Angeles', lat: 34.0522, lon: -118.2437 },
+  { label: '🇺🇸 샌프란시스코', name: 'San Francisco', lat: 37.7749, lon: -122.4194 }, // 추가
+  { label: '🇺🇸 하와이', name: 'Honolulu', lat: 21.3069, lon: -157.8583 },       // 추가
   { label: '🇦🇺 시드니', name: 'Sydney', lat: -33.8688, lon: 151.2093 },      // 추가
   { label: '🇨🇳 상하이', name: 'Shanghai', lat: 31.2304, lon: 121.4737 },    // 추가
   { label: '🇻🇳 다낭', name: 'Da Nang', lat: 16.0544, lon: 108.2022 },       // 추가
+  { label: '🇸🇬 싱가포르', name: 'Singapore', lat: 1.3521, lon: 103.8198 },
   { label: '🇫🇷 파리', name: 'Paris', lat: 48.8566, lon: 2.3522 },           // 추가
   { label: '🇬🇧 런던', name: 'London', lat: 51.5074, lon: -0.1278 },         // 추가
   { label: '🇧🇷 상파울루', name: 'Sao Paulo', lat: -23.5505, lon: -46.6333 }, // 추가
-  { label: '🇸🇬 싱가포르', name: 'Singapore', lat: 1.3521, lon: 103.8198 },
 ];
 
 export default function WeatherScreen() {
@@ -90,7 +92,7 @@ export default function WeatherScreen() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4A90E2" />
-        <Text style={{ marginTop: 10 }}>지구 반대편 소식을 가져오는 중...</Text>
+        <Text style={{ marginTop: 10 }}>다른 도시 날씨를 가져오는 중...</Text>
       </View>
     );
   }
@@ -129,19 +131,26 @@ export default function WeatherScreen() {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>확인할 도시를 선택하세요</Text>
-              {FAVORITE_CITIES.map((city) => (
-                <Pressable
-                  key={city.name}
-                  style={styles.cityItem}
-                  onPress={() => {
-                    saveCity(city);      // 도시 저장
-                    setTargetCity(city); // 도시 변경
-                    setModalVisible(false); // 창 닫기
-                  }}
-                >
-                  <Text style={styles.cityText}>{city.label}</Text>
-                </Pressable>
-              ))}
+              <ScrollView
+                style={{ width: '100%' }}
+                contentContainerStyle={{ alignItems: 'center' }}
+                showsVerticalScrollIndicator={true} // 스크롤 바를 보이게 해서 더 있다는 걸 알려줍니다
+              >
+
+                {FAVORITE_CITIES.map((city) => (
+                  <Pressable
+                    key={city.name}
+                    style={styles.cityItem}
+                    onPress={() => {
+                      saveCity(city);      // 도시 저장
+                      setTargetCity(city); // 도시 변경
+                      setModalVisible(false); // 창 닫기
+                    }}
+                  >
+                    <Text style={styles.cityText}>{city.label}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
               <Pressable onPress={() => setModalVisible(false)} style={styles.closeButton}>
                 <Text style={{ color: '#fff', fontWeight: 'bold' }}>닫기</Text>
               </Pressable>
@@ -149,7 +158,7 @@ export default function WeatherScreen() {
           </View>
         </Modal>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 

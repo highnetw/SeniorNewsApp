@@ -13,7 +13,7 @@ export const fetchWeatherByCoords = async (lat: number, lon: number) => {
         lon: lon,
         appid: API_KEY,
         units: 'metric',
-        lang: 'kr',
+        lang: 'en',
       },
     });
 
