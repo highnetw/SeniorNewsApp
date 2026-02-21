@@ -6,7 +6,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4A90E2', // 활성화된 메뉴는 파란색
+        tabBarActiveTintColor: '#4A90E2', // 활성화된 메뉴는 파란색입니다
         tabBarStyle: {
           // 안드로이드 하단 버튼과 겹치지 않게 높이를 충분히 올렸습니다 (8mm 상승 효과)
           height: Platform.OS === 'android' ? 85 : 90,
