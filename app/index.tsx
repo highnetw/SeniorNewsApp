@@ -8,7 +8,7 @@ import { fetchWeatherByCoords } from '../services/weatherService';
 const FAVORITE_CITIES = [
   { label: '🇺🇸 뉴욕', name: 'New York', lat: 40.7128, lon: -74.0060 },
   { label: '🇨🇦 토론토', name: 'Toronto', lat: 43.6532, lon: -79.3832 },
-  { label: '🇨🇦 밴쿠버', name: 'Vancouver', lat: 49.2827, lon: -123.1207 },
+  { label: '🇨🇦 밴쿠버', name: 'Target', lat: 49.2827, lon: -123.1207 },
   { label: '🇺🇸 LA', name: 'Los Angeles', lat: 34.0522, lon: -118.2437 },
   { label: '🇺🇸 샌프란시스코', name: 'San Francisco', lat: 37.7749, lon: -122.4194 },
   { label: '🇺🇸 하와이', name: 'Honolulu', lat: 21.3069, lon: -157.8583 },
@@ -145,15 +145,15 @@ export default function WeatherScreen() {
           {/* 하단: 선택한 도시 (터치 시 변경) */}
           {targetCity && (
             <Pressable
-              style={[styles.weatherBox, styles.vancouverBox]}
+              style={[styles.weatherBox, styles.targetBox]}
               onPress={() => setModalVisible(true)}
             >
               <Text style={styles.locationTag}>{targetCity.label} (터치하여 변경)</Text>
               <Text style={[styles.timeTag, { color: '#1976D2' }]}>
                 {getLocalTime(targetWeather?.timezone)}
               </Text>
-              <Text style={styles.vancouverTemp}>{targetWeather?.temp ?? '--'}°</Text>
-              <Text style={styles.vancouverDesc}>{targetWeather?.description}</Text>
+              <Text style={styles.targetTemp}>{targetWeather?.temp ?? '--'}°</Text>
+              <Text style={styles.targetDesc}>{targetWeather?.description}</Text>
             </Pressable>
           )}
         </View>
@@ -210,9 +210,9 @@ const styles = StyleSheet.create({
   timeTag: { fontSize: 20, fontWeight: 'bold', color: '#4A90E2', marginBottom: 10 },
   temp: { fontSize: 60, fontWeight: 'bold', color: '#333' },
   description: { fontSize: 20, color: '#555' },
-  vancouverBox: { marginTop: 20, backgroundColor: '#E3F2FD' },
-  vancouverTemp: { fontSize: 50, fontWeight: 'bold', color: '#1976D2' },
-  vancouverDesc: { fontSize: 20, color: '#555' },
+  targetBox: { marginTop: 20, backgroundColor: '#E3F2FD' },
+  targetTemp: { fontSize: 60, fontWeight: 'bold', color: '#333' },
+  targetDesc: { fontSize: 20, color: '#555' },
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
