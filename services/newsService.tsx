@@ -39,11 +39,21 @@ export const fetchNaverNews = async (query: string) => {
     }
 
     const data = await response.json();
-
     if (data.items) {
-      // 1. 먼저 데이터를 기존 방식대로 예쁘게 정리합니다.
       const newsList = data.items.map((item: any) => {
-        const cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+        // ⭐ 1. HTML 태그 제거 및 특수 문자(&quot; 등) 정제
+        let cleanTitle = item.title.replace(/<[^>]*>?/gm, '');
+
+        // 여기에 이 코드를 추가해야 껄끄러운 글자가 사라집니다!
+        cleanTitle = cleanTitle
+          .replace(/&quot;/g, '"')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&apos;/g, "'")
+          .replace(/&#39;/g, "'")
+          .replace(/&middot;/g, '·');
+
         const isNaverNews = item.link.includes("news.naver.com");
 
         return {
@@ -51,19 +61,19 @@ export const fetchNaverNews = async (query: string) => {
           link: item.link,
           pubDate: formatDate(item.pubDate),
           publisher: isNaverNews ? "네이버뉴스" : "언론사 직접제공",
-          description: item.description.replace(/<[^>]*>?/gm, ''),
+          // 상세 설명에서도 특수 문자를 지우고 싶다면 똑같이 적용할 수 있습니다.
+          description: item.description.replace(/<[^>]*>?/gm, '').replace(/&quot;/g, '"'),
         };
       });
 
-      // ⭐ 2. 중복 제거 필터 (제목이 같은 뉴스는 처음 하나만 남깁니다)
+      // 2. 중복 제거 필터 (기존 로직 유지)
       const uniqueNews = newsList.filter((news: any, index: number, self: any[]) =>
         index === self.findIndex((t) => t.title === news.title)
       );
 
-      // 3. 중복이 사라진 깨끗한 리스트를 리턴!
       return uniqueNews;
     }
-
+    
     return [];
     // ... 뒷부분 생략 (catch 블록 등)
   } catch (error) {
