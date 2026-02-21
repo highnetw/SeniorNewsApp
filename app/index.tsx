@@ -134,7 +134,7 @@ export default function WeatherScreen() {
         <View style={styles.container}>
           <Text style={styles.title}>실시간 날씨와 시간</Text>
 
-          {/* 상단: 내 현재 위치 */}
+          {/* 상단: 내 위치 */}
           <View style={styles.weatherBox}>
             <Text style={styles.locationTag}>📍 내 위치 ({localWeather?.displayCity})</Text>
             <Text style={styles.timeTag}>{getLocalTime(localWeather?.timezone)}</Text>
